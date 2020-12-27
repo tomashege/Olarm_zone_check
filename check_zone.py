@@ -5,6 +5,8 @@ import mimetypes
 import ssl
 import json
 import time
+from time import localtime, strftime
+from datetime import datetime
 # mac has some issue with SLL this fixes it 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -28,27 +30,36 @@ jdata = json.loads(my_json)
 time_for_active_6 = 0
 time_for_active_7 = 0
 for i in jdata['data'][::-1]:
-    print(time_for_active_7)
     if i['eventNum'] == 6 and i['eventState'] == 'active':
-        print("6 - we found an active")
         # get the time from this event... 
         time_for_active_6 = i['eventTime']
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['eventTime']/1000)) )
 
     if i['eventNum'] == 7 and i['eventState'] == 'active':
-        print("7 - we found an active")
         time_for_active_7 = i['eventTime']
-        print(time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(i['eventTime']/1000)) )
 
     if i['eventNum'] == 6 and i['eventState'] == 'closed':
         time_for_active_6 = 0
     if i['eventNum'] == 7 and i['eventState'] == 'closed':
         time_for_active_7 = 0
     
+def time_between(d1, d2):
+    d1 = datetime.strptime(d1, "%Y-%m-%d %H:%M:%S")
+    d2 = datetime.strptime(d2, "%Y-%m-%d %H:%M:%S")
+    #return d2-d1
+    return abs((d2 - d1).seconds/60)
+
 if time_for_active_6 != 0:
     print("we have an open Garaged - 6")
+
 if time_for_active_7 != 0:
-    print("we have an open Garaged - 7")
+    time_from_the_gararge = (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time_for_active_7/1000)))
+    current = ( strftime("%Y-%m-%d %H:%M:%S", localtime() ) )
+    elapsed = time_between(time_from_the_gararge, current)
+    if  elapsed > 3:
+        print("the Gararge has been open for longer then ",elapsed , "mins" )
+
+    
+
 
 
 
