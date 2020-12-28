@@ -65,7 +65,7 @@ while True:
         time_from_the_gararge = (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time_for_active_6/1000)))
         current = ( strftime("%Y-%m-%d %H:%M:%S", localtime() ) )
         elapsed = time_between(time_from_the_gararge, current)
-        if  elapsed > 15:
+        if  elapsed > 10:
             print("The Gararge (orange car) has been open for longer then ",elapsed , "mins" )
             pushbullet_message("Message from garaged", "The door (white car) has been open for " + str(elapsed) + " mins")
 
@@ -73,17 +73,6 @@ while True:
         time_from_the_gararge = (time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time_for_active_7/1000)))
         current = ( strftime("%Y-%m-%d %H:%M:%S", localtime() ) )
         elapsed = time_between(time_from_the_gararge, current)
-        if  elapsed > 15:
+        if  elapsed > 10:
             print("the Gararge (white car) has been open for longer then ",elapsed , "mins" )
             pushbullet_message("Message from garaged", "The door (orange car) has been open for " + str(elapsed) + " mins")
-
-
-
-    
-    
-    
-
-
-
-
-
