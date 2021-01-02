@@ -1,6 +1,8 @@
 import hide
 headers = hide.headers
 TOKEN = hide.TOKEN
+tell_token = hide.tell_token
+chat_id = hide.chat_id
 import http.client
 import mimetypes
 import ssl
@@ -10,6 +12,7 @@ from time import localtime, strftime
 from datetime import datetime
 import requests
 import json
+
 # mac has some issue with SLL this fixes it 
 try:
     _create_unverified_https_context = ssl._create_unverified_context
@@ -22,16 +25,29 @@ else:
 
 def pushbullet_message(title, body):
     msg = {"type": "note", "title": title, "body": body}
-    resp = requests.post('https://api.pushbullet.com/v2/pushes', 
-                         data=json.dumps(msg),
-                         headers={'Authorization': 'Bearer ' + TOKEN,
-                                  'Content-Type': 'application/json'})
-    if resp.status_code != 200:
-        raise Exception('Error',resp.status_code)
-    else:
-        print ('Message sent') 
+    for i in TOKEN:
+        resp = requests.post('https://api.pushbullet.com/v2/pushes', 
+                            data=json.dumps(msg),
+                            headers={'Authorization': 'Bearer ' + i,
+                                    'Content-Type': 'application/json'})
+        if resp.status_code != 200:
+            raise Exception('Error',resp.status_code)
+        else:
+            print ('Message sent') 
+
+def send_to_telegram(message):
+    url = f'https://api.telegram.org/bot{tell_token}/sendMessage'
+    data = {'chat_id': chat_id, 'text': message}
+    try:
+        requests.post(url, data).json()
+        print("Message sent to Telegram")
+    except:
+        print("message did not send")
 
 print("start")
+pushbullet_message("Start", "The code has started")
+send_to_telegram("Start - The code has started")
+
 time_for_active_6 = 0
 time_for_active_7 = 0
 while True:
@@ -68,6 +84,7 @@ while True:
             if  elapsed > 10:
                 print("The Gararge (orange car) has been open for longer then ",elapsed , "mins" )
                 pushbullet_message("Message from garaged", "The door (orange car) has been open for " + str(elapsed) + " mins")
+                send_to_telegram("The door (orange car) has been open for " + str(elapsed) + " mins")
                 time.sleep(120)
 
         if time_for_active_7 != 0:
@@ -77,9 +94,15 @@ while True:
             if  elapsed > 10:
                 print("the Gararge (white car) has been open for longer then ",elapsed , "mins" )
                 pushbullet_message("Message from garaged", "The door (white car) has been open for " + str(elapsed) + " mins")
+                send_to_telegram("The door (white car) has been open for " + str(elapsed) + " mins")
                 time.sleep(120)
         # finaly we wait for 2 mins and then we do the whole process again
         time.sleep(120)
     except:
         print("An error occurred try again")
+        try:
+            pushbullet_message("ERROR", "Somthing went wrong - check the terminal")
+            send_to_telegram("ERROR - Somthing went wrong - check the terminal")
+        except:
+            print("push bullet / telei is not working")
         time.sleep(10)
