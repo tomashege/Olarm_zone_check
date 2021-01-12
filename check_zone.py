@@ -36,7 +36,7 @@ def pushbullet_message(title, body):
             print ('Message sent') 
 
 def send_to_telegram(message):
-    url = f'https://api.telegram.org/bot{tell_token}/sendMessage'
+    url = 'https://api.telegram.org/bot'+tell_token+'/sendMessage'
     data = {'chat_id': chat_id, 'text': message}
     try:
         requests.post(url, data).json()
