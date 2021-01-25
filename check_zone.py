@@ -23,29 +23,17 @@ else:
     # Handle target environment that doesn't support HTTPS verification
     ssl._create_default_https_context = _create_unverified_https_context
 
-def pushbullet_message(title, body):
-    msg = {"type": "note", "title": title, "body": body}
-    for i in TOKEN:
-        resp = requests.post('https://api.pushbullet.com/v2/pushes', 
-                            data=json.dumps(msg),
-                            headers={'Authorization': 'Bearer ' + i,
-                                    'Content-Type': 'application/json'})
-        if resp.status_code != 200:
-            raise Exception('Error',resp.status_code)
-        else:
-            print ('Message sent') 
-
 def send_to_telegram(message):
     url = 'https://api.telegram.org/bot'+tell_token+'/sendMessage'
-    data = {'chat_id': chat_id, 'text': message}
-    try:
-        requests.post(url, data).json()
-        print("Message sent to Telegram")
-    except:
-        print("message did not send")
+    for i in chat_id:
+        data = {'chat_id': i, 'text': message}
+        try:
+            requests.post(url, data).json()
+            print("Message sent to Telegram")
+        except:
+            print("message did not send")
 
 print("start")
-pushbullet_message("Start", "The code has started")
 send_to_telegram("Start - The code has started")
 
 time_for_active_6 = 0
@@ -83,7 +71,6 @@ while True:
             elapsed = time_between(time_from_the_gararge, current)
             if  elapsed > 10:
                 print("The Gararge (orange car) has been open for longer then ",elapsed , "mins" )
-                pushbullet_message("Message from garaged", "The door (orange car) has been open for " + str(elapsed) + " mins")
                 send_to_telegram("The door (orange car) has been open for " + str(elapsed) + " mins")
                 time.sleep(120)
 
@@ -93,7 +80,6 @@ while True:
             elapsed = time_between(time_from_the_gararge, current)
             if  elapsed > 10:
                 print("the Gararge (white car) has been open for longer then ",elapsed , "mins" )
-                pushbullet_message("Message from garaged", "The door (white car) has been open for " + str(elapsed) + " mins")
                 send_to_telegram("The door (white car) has been open for " + str(elapsed) + " mins")
                 time.sleep(120)
         # finaly we wait for 2 mins and then we do the whole process again
@@ -101,7 +87,6 @@ while True:
     except:
         print("An error occurred try again")
         try:
-            pushbullet_message("ERROR", "Somthing went wrong - check the terminal")
             send_to_telegram("ERROR - Somthing went wrong - check the terminal")
         except:
             print("push bullet / telei is not working")
