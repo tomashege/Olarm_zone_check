@@ -45,6 +45,7 @@ while True:
         conn.request("GET", "/api/v4/devices/2731071d-a487-44e8-bb29-fb9a189f6e72/events?pageLength=40", payload, headers)
         res = conn.getresponse()
         data = res.read()
+        
         my_json = data.decode('utf8').replace("'", '"')
         jdata = json.loads(my_json)
         for i in jdata['data'][::-1]:
@@ -79,8 +80,8 @@ while True:
             current = ( strftime("%Y-%m-%d %H:%M:%S", localtime() ) )
             elapsed = time_between(time_from_the_gararge, current)
             if  elapsed > 10:
-                print("the Gararge (white car) has been open for longer then ",elapsed , "mins" )
-                send_to_telegram("The door (white car) has been open for " + str(elapsed) + " mins")
+                print("the Gararge (blue car) has been open for longer then ",elapsed , "mins" )
+                send_to_telegram("The door (blue car) has been open for " + str(elapsed) + " mins")
                 time.sleep(120)
         # finaly we wait for 2 mins and then we do the whole process again
         time.sleep(120)
